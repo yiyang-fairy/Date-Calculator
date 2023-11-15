@@ -5,8 +5,8 @@ import { useState } from "react";
 import * as relativeTime from "dayjs/plugin/relativeTime";
 export const Calcultor = () => {
   const [type, setType] = useState(0);
-  const [startData, setStartData] = useState("");
-  const [endData, setEndData] = useState("");
+  const [startDate, setStartDate] = useState<dayjs.Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<dayjs.Dayjs | null>(null);
   const [days, setDays] = useState(0);
   const [calculateType, setCalculateType] = useState(0);
   const [result, setResult] = useState("");
@@ -15,17 +15,18 @@ export const Calcultor = () => {
   dayjs.locale("zh-cn");
 
   const calculate = () => {
-    const start = dayjs(startData);
-    const end = dayjs(endData);
+    if (!startDate || !endDate) {
+      return;
+    }
     if (type === 0) {
       const result =
         calculateType === 0
-          ? start.subtract(days, "days")
-          : start.add(days, "days");
+          ? startDate.subtract(days, "days")
+          : startDate.add(days, "days");
       setResult(result.format("YYYY-MM-DD"));
       return;
     }
-    setResult(start.to(end, true));
+    setResult(startDate.to(endDate, true));
   };
   return (
     <div className="mt-8 w-96">
@@ -55,7 +56,7 @@ export const Calcultor = () => {
         <div className="mt-6 flex items-center justify-between rounded-xl py-3 px-2">
           <span>开始日期</span>
           <DatePicker
-            onChange={(date, dateString) => setStartData(dateString)}
+            onChange={(date) => setStartDate(date)}
             placeholder="选择开始日期"
           />
         </div>
@@ -89,8 +90,8 @@ export const Calcultor = () => {
         >
           <span>结束日期</span>
           <DatePicker
-            onChange={(date, dateString) => {
-              setEndData(dateString);
+            onChange={(date) => {
+              setEndDate(date);
             }}
             placeholder="选择结束日期"
           />
