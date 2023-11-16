@@ -27,7 +27,7 @@ export const Calculator = () => {
       return;
     }
 
-    setResult(startDate.to(endDate, true));
+    setResult(endDate.diff(startDate, "day") + "天");
   };
 
   return (
