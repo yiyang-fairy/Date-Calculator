@@ -1,18 +1,15 @@
 import { Button, Space, DatePicker, InputNumber, Select } from "antd";
-import dayjs from "dayjs";
-import "dayjs/locale/zh-cn";
+import { Dayjs } from "dayjs";
 import { useState } from "react";
-import * as relativeTime from "dayjs/plugin/relativeTime";
+import locale from "antd/es/date-picker/locale/zh_CN";
+
 export const Calcultor = () => {
   const [type, setType] = useState(0);
-  const [startDate, setStartDate] = useState<dayjs.Dayjs | null>(null);
-  const [endDate, setEndDate] = useState<dayjs.Dayjs | null>(null);
+  const [startDate, setStartDate] = useState<Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const [days, setDays] = useState(0);
   const [calculateType, setCalculateType] = useState(0);
   const [result, setResult] = useState("");
-
-  dayjs.extend(relativeTime);
-  dayjs.locale("zh-cn");
 
   const calculate = () => {
     if (!startDate || !endDate) {
@@ -56,6 +53,7 @@ export const Calcultor = () => {
         <div className="mt-6 flex items-center justify-between rounded-xl py-3 px-2">
           <span>开始日期</span>
           <DatePicker
+            locale={locale}
             onChange={(date) => setStartDate(date)}
             placeholder="选择开始日期"
           />
@@ -90,6 +88,7 @@ export const Calcultor = () => {
         >
           <span>结束日期</span>
           <DatePicker
+            locale={locale}
             onChange={(date) => {
               setEndDate(date);
             }}
