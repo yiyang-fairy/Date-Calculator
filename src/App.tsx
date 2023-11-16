@@ -1,8 +1,8 @@
-import { Calcultor } from "./components/Calculator";
+import { Calculator } from "./components/Calculator";
 
 const App = () => (
   <div className="flex items-center justify-center">
-    <Calcultor></Calcultor>
+    <Calculator></Calculator>
   </div>
 );
 

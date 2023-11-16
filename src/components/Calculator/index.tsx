@@ -1,30 +1,35 @@
-import { Button, Space, DatePicker, InputNumber, Select } from "antd";
+import { Button, DatePicker, Form, InputNumber, Select, Space } from "antd";
 import { Dayjs } from "dayjs";
 import { useState } from "react";
 import locale from "antd/es/date-picker/locale/zh_CN";
 
-export const Calcultor = () => {
-  const [type, setType] = useState(0);
-  const [startDate, setStartDate] = useState<Dayjs | null>(null);
-  const [endDate, setEndDate] = useState<Dayjs | null>(null);
-  const [days, setDays] = useState(0);
-  const [calculateType, setCalculateType] = useState(0);
-  const [result, setResult] = useState("");
+type FormType = {
+  startDate: Dayjs;
+  endDate: Dayjs;
+  days: number;
+  calculateType: 0 | 1;
+};
 
-  const calculate = () => {
-    if (!startDate || !endDate) {
-      return;
-    }
+export const Calculator = () => {
+  const [result, setResult] = useState("");
+  const [type, setType] = useState(0);
+
+  const onFinish = (values: FormType) => {
+    const { startDate, calculateType, days, endDate } = values;
+
     if (type === 0) {
       const result =
         calculateType === 0
           ? startDate.subtract(days, "days")
           : startDate.add(days, "days");
+
       setResult(result.format("YYYY-MM-DD"));
       return;
     }
+
     setResult(startDate.to(endDate, true));
   };
+
   return (
     <div className="mt-8 w-96">
       <div className="flex justify-center">
@@ -49,59 +54,56 @@ export const Calcultor = () => {
           </Button>
         </Space>
       </div>
-      <div className="mt-6 flex flex-col ">
-        <div className="mt-6 flex items-center justify-between rounded-xl py-3 px-2">
-          <span>开始日期</span>
-          <DatePicker
-            locale={locale}
-            onChange={(date) => setStartDate(date)}
-            placeholder="选择开始日期"
-          />
-        </div>
-        <div
-          className={`mt-6 flex items-center justify-between bg-gray-300/50 rounded-xl py-3 px-2 ${
-            type === 0 ? "block" : "hidden"
-          }`}
+      <Form
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 16 }}
+        style={{ maxWidth: 600, marginTop: 50 }}
+        onFinish={onFinish}
+        autoComplete="off"
+      >
+        <Form.Item
+          label="开始日期"
+          name="startDate"
+          rules={[{ required: true, message: "请选择开始日期" }]}
         >
-          <InputNumber
-            placeholder="请输入天数"
-            bordered={false}
-            value={days}
-            min={0}
-            onChange={(value) => setDays(Number(value))}
-          />
-          <Select
-            defaultValue={calculateType}
-            style={{ width: 100 }}
-            bordered={false}
-            onChange={setCalculateType}
-            options={[
-              { value: 0, label: "往前推" },
-              { value: 1, label: "往后推" },
-            ]}
-          />
-        </div>
-        <div
-          className={`mt-6 flex items-center justify-between rounded-xl py-3 px-2 ${
-            type === 1 ? "block" : "hidden"
-          }`}
-        >
-          <span>结束日期</span>
-          <DatePicker
-            locale={locale}
-            onChange={(date) => {
-              setEndDate(date);
-            }}
-            placeholder="选择结束日期"
-          />
-        </div>
-      </div>
-      <div className="mt-6 flex items-center justify-end rounded-xl py-3">
-        <Button onClick={calculate} type="primary">
-          开始推算
-        </Button>
-      </div>
-      <div>推算结果：{result}</div>
+          <DatePicker locale={locale} />
+        </Form.Item>
+        {type === 0 ? (
+          <div>
+            <Form.Item label="前后推算" name="calculateType" initialValue={0}>
+              <Select
+                style={{ maxWidth: 100 }}
+                options={[
+                  { value: 0, label: "往前推" },
+                  { value: 1, label: "往后推" },
+                ]}
+              />
+            </Form.Item>
+            <Form.Item
+              label="天数"
+              name="days"
+              rules={[{ required: true, message: "请填写日期" }]}
+            >
+              <InputNumber min={0} />
+            </Form.Item>
+          </div>
+        ) : (
+          <Form.Item
+            label="结束日期"
+            name="endDate"
+            rules={[{ required: true, message: "请选择结束日期" }]}
+          >
+            <DatePicker locale={locale} />
+          </Form.Item>
+        )}
+
+        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+          <Button type="primary" htmlType="submit">
+            开始推算
+          </Button>
+        </Form.Item>
+      </Form>
+      <div className=" ml-12">推算结果：{result}</div>
     </div>
   );
 };
